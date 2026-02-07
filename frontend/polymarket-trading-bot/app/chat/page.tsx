@@ -2,16 +2,13 @@
    CHAT PAGE — Terminal-style chat with the AI trading bot
    
    Allows the user to have a conversation with the bot.
-   The bot responds with simulated AI-generated answers
-   about trading strategy, market analysis, and portfolio.
+   Les messages sont envoyés au backend Python via POST /api/chat.
    
    Features:
    - Terminal-style chat interface
    - Typing indicator
    - Pre-built suggested questions
    - Chat history
-   
-   In production, messages go through the tunnel to the bot.
    ============================================================ */
 
 'use client';
@@ -19,9 +16,9 @@
 import { useState, useCallback } from 'react';
 import { MessageSquareText, Lightbulb } from 'lucide-react';
 import ClientLayout from '@/components/ClientLayout';
+import { useAppContext } from '@/components/ClientLayout';
 import ChatBox from '@/components/ChatBox';
 import { ChatMessage } from '@/lib/types';
-import { generateBotResponse } from '@/lib/simulator';
 
 /* ---- Pre-built suggested questions ---- */
 const SUGGESTED_QUESTIONS = [
@@ -34,6 +31,16 @@ const SUGGESTED_QUESTIONS = [
 ];
 
 export default function ChatPage() {
+  return (
+    <ClientLayout>
+      <ChatContent />
+    </ClientLayout>
+  );
+}
+
+function ChatContent() {
+  const { sendChatMessage, isConnected } = useAppContext();
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'initial',
@@ -45,8 +52,8 @@ export default function ChatPage() {
   ]);
   const [isTyping, setIsTyping] = useState(false);
 
-  /* Handle sending a message */
-  const handleSendMessage = useCallback((content: string) => {
+  /* Handle sending a message — appelle le backend via API */
+  const handleSendMessage = useCallback(async (content: string) => {
     /* Add user message */
     const userMsg: ChatMessage = {
       id: `user_${Date.now()}`,
@@ -55,27 +62,30 @@ export default function ChatPage() {
       content,
     };
     setMessages((prev) => [...prev, userMsg]);
-
-    /* Simulate bot typing delay */
     setIsTyping(true);
 
-    /* Generate bot response after a realistic delay */
-    const delay = 1000 + Math.random() * 2000; // 1-3 seconds
-    setTimeout(() => {
-      const botResponse = generateBotResponse(content);
-      const botMsg: ChatMessage = {
+    /* Envoyer au backend Python */
+    const botResponse = await sendChatMessage(content);
+
+    if (botResponse) {
+      /* Réponse reçue du backend */
+      setMessages((prev) => [...prev, botResponse]);
+    } else {
+      /* Erreur — message de fallback */
+      const errorMsg: ChatMessage = {
         id: `bot_${Date.now()}`,
         timestamp: new Date().toISOString(),
         sender: 'BOT',
-        content: botResponse,
+        content: '⚠️ Impossible de joindre le backend. Vérifiez que le serveur Python est lancé.',
       };
-      setMessages((prev) => [...prev, botMsg]);
-      setIsTyping(false);
-    }, delay);
-  }, []);
+      setMessages((prev) => [...prev, errorMsg]);
+    }
+
+    setIsTyping(false);
+  }, [sendChatMessage]);
 
   return (
-    <ClientLayout>
+    <>
       {/* ---- Page header — Retro ASCII ---- */}
       <div className="mb-6">
         <pre className="text-xs text-text-muted font-mono select-none">────────────────────────────────────────</pre>
@@ -142,6 +152,6 @@ export default function ChatPage() {
           </div>
         </div>
       </div>
-    </ClientLayout>
+    </>
   );
 }

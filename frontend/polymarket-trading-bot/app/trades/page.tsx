@@ -7,12 +7,11 @@
    - Sortable and filterable trade table
    - Expandable AI reasoning for each trade
    
-   In production, data comes from the tunnel/API.
+   Données live via useAppContext() (polling backend Python).
    ============================================================ */
 
 'use client';
 
-import { useState, useEffect } from 'react';
 import {
   History,
   TrendingUp,
@@ -21,42 +20,33 @@ import {
   Target,
 } from 'lucide-react';
 import ClientLayout from '@/components/ClientLayout';
+import { useAppContext } from '@/components/ClientLayout';
 import TradeTable from '@/components/TradeTable';
 import StatCard from '@/components/StatCard';
-import { generateTradeHistory, generateTrade, SIMULATED_MARKETS } from '@/lib/simulator';
-import { Trade } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils';
 
 export default function TradesPage() {
-  const [trades, setTrades] = useState<Trade[]>([]);
+  return (
+    <ClientLayout>
+      <TradesContent />
+    </ClientLayout>
+  );
+}
 
-  /* Initialize with historical trades */
-  useEffect(() => {
-    setTrades(generateTradeHistory(100));
-  }, []);
-
-  /* Simulate new trades arriving */
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newTrade = generateTrade(SIMULATED_MARKETS);
-      setTrades((prev) => [newTrade, ...prev]);
-    }, 25000); // New trade every 25 seconds
-
-    return () => clearInterval(interval);
-  }, []);
+function TradesContent() {
+  const { recentTrades: trades } = useAppContext();
 
   /* Calculate summary stats from trades */
   const totalTrades = trades.length;
   const buyCount = trades.filter((t) => t.action === 'BUY').length;
   const sellCount = trades.filter((t) => t.action === 'SELL').length;
-  const holdCount = trades.filter((t) => t.action === 'HOLD').length;
   const totalPnL = trades.reduce((acc, t) => acc + (t.profitLoss ?? 0), 0);
   const winCount = trades.filter((t) => t.profitLoss !== undefined && t.profitLoss > 0).length;
   const lossCount = trades.filter((t) => t.profitLoss !== undefined && t.profitLoss < 0).length;
   const winRate = winCount + lossCount > 0 ? (winCount / (winCount + lossCount)) * 100 : 0;
 
   return (
-    <ClientLayout>
+    <>
       {/* ---- Page header — Retro ASCII ---- */}
       <div className="mb-6">
         <pre className="text-xs text-text-muted font-mono select-none">────────────────────────────────────────</pre>
@@ -116,6 +106,6 @@ export default function TradesPage() {
         </h2>
         <TradeTable trades={trades} />
       </div>
-    </ClientLayout>
+    </>
   );
 }

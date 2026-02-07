@@ -10,16 +10,25 @@
 
 'use client';
 
-import { Market } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { useAppContext } from '@/components/ClientLayout';
 
-interface MarketTickerProps {
-  markets: Market[];
-}
+export default function MarketTicker() {
+  const { markets } = useAppContext();
 
-export default function MarketTicker({ markets }: MarketTickerProps) {
   /* Double the items for seamless infinite scroll effect */
   const doubled = [...markets, ...markets];
+
+  /* Rien à afficher si aucun marché reçu */
+  if (markets.length === 0) {
+    return (
+      <div className="w-full overflow-hidden border-b border-border bg-surface py-1.5">
+        <div className="text-center text-xs text-text-muted font-mono py-0.5">
+          ░░░ EN ATTENTE DES DONNÉES MARCHÉ... ░░░
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full overflow-hidden border-b border-border bg-surface py-1.5">

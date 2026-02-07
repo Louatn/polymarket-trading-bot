@@ -26,6 +26,7 @@ import {
   Shield,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAppContext } from '@/components/ClientLayout';
 
 /* ---- Navigation items configuration ---- */
 const NAV_ITEMS = [
@@ -61,12 +62,9 @@ const NAV_ITEMS = [
   },
 ];
 
-interface SidebarProps {
-  isConnected: boolean; // Bot connection status
-}
-
-export default function Sidebar({ isConnected }: SidebarProps) {
+export default function Sidebar() {
   const pathname = usePathname();
+  const { botStatus, isConnected } = useAppContext();
 
   return (
     <aside className="fixed top-0 left-0 z-50 flex h-screen w-64 flex-col border-r border-border bg-surface">
@@ -135,16 +133,16 @@ export default function Sidebar({ isConnected }: SidebarProps) {
           )}
         </div>
 
-        {/* Mode badge */}
+        {/* Mode badge — dynamique depuis le backend */}
         <div className="flex items-center gap-2 mb-2">
           <Shield className="h-3 w-3 text-accent-amber" />
-          <span className="text-xs text-accent-amber font-mono">[PAPER MODE]</span>
+          <span className="text-xs text-accent-amber font-mono">[{botStatus.mode} MODE]</span>
         </div>
 
-        {/* Version */}
+        {/* Version — dynamique depuis le backend */}
         <div className="mt-3 flex items-center gap-2">
           <Terminal className="h-3 w-3 text-text-muted" />
-          <span className="text-[10px] text-text-muted font-mono">v2.4.1 • polybot</span>
+          <span className="text-[10px] text-text-muted font-mono">{botStatus.version} • polybot</span>
         </div>
       </div>
     </aside>

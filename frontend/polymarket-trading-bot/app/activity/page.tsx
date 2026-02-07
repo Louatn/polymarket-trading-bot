@@ -7,14 +7,12 @@
    - AI analysis updates
    - Connection events
    
-   Styled like a terminal/console output for the hacker feel.
-   
-   In production, data comes from the tunnel.
+   Données live via useAppContext() (polling backend Python).
    ============================================================ */
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Activity,
   AlertTriangle,
@@ -24,8 +22,8 @@ import {
   Filter,
 } from 'lucide-react';
 import ClientLayout from '@/components/ClientLayout';
+import { useAppContext } from '@/components/ClientLayout';
 import ActivityFeed from '@/components/ActivityFeed';
-import { generateActivityLogs } from '@/lib/simulator';
 import { ActivityLog } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -33,23 +31,16 @@ import { cn } from '@/lib/utils';
 type ActivityFilter = 'ALL' | 'TRADE' | 'ALERT' | 'SYSTEM' | 'ANALYSIS';
 
 export default function ActivityPage() {
-  const [logs, setLogs] = useState<ActivityLog[]>([]);
+  return (
+    <ClientLayout>
+      <ActivityContent />
+    </ClientLayout>
+  );
+}
+
+function ActivityContent() {
+  const { activities: logs } = useAppContext();
   const [filter, setFilter] = useState<ActivityFilter>('ALL');
-
-  /* Initialize with historical logs */
-  useEffect(() => {
-    setLogs(generateActivityLogs(100));
-  }, []);
-
-  /* Simulate new logs arriving */
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newLogs = generateActivityLogs(1);
-      setLogs((prev) => [...newLogs, ...prev].slice(0, 200));
-    }, 8000); // New log every 8 seconds
-
-    return () => clearInterval(interval);
-  }, []);
 
   /* Apply type filter */
   const filteredLogs = filter === 'ALL'
@@ -66,7 +57,7 @@ export default function ActivityPage() {
   ];
 
   return (
-    <ClientLayout>
+    <>
       {/* ---- Page header — Retro ASCII ---- */}
       <div className="mb-6">
         <pre className="text-xs text-text-muted font-mono select-none">────────────────────────────────────────</pre>
@@ -129,6 +120,6 @@ export default function ActivityPage() {
           <ActivityFeed logs={filteredLogs} maxItems={100} />
         </div>
       </div>
-    </ClientLayout>
+    </>
   );
 }

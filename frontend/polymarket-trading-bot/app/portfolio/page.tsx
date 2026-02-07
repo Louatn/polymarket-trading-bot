@@ -2,17 +2,17 @@
    PORTFOLIO PAGE — Detailed portfolio view
    
    Features:
-   - Full-size portfolio value chart (30 days + 90 days)
+   - Full-size portfolio value chart
    - Cash vs invested breakdown
    - P&L over time chart
    - Complete positions list
    
-   In production, data comes from the tunnel.
+   Données live via useAppContext() (polling backend Python).
    ============================================================ */
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   LineChart,
   TrendingUp,
@@ -21,8 +21,6 @@ import {
   ArrowUpDown,
 } from 'lucide-react';
 import {
-  AreaChart,
-  Area,
   BarChart,
   Bar,
   XAxis,
@@ -32,54 +30,55 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import ClientLayout from '@/components/ClientLayout';
+import { useAppContext } from '@/components/ClientLayout';
 import PortfolioChart from '@/components/PortfolioChart';
 import PositionsList from '@/components/PositionsList';
 import StatCard from '@/components/StatCard';
-import {
-  generatePortfolioHistory,
-  generatePositions,
-  generateDashboardStats,
-} from '@/lib/simulator';
-import { PortfolioSnapshot, Position, DashboardStats } from '@/lib/types';
 import { formatCurrency, formatPercent, formatDate, cn } from '@/lib/utils';
 
-/* Time range options */
+/* Time range options — filtre côté client sur l'historique */
 type TimeRange = '7d' | '30d' | '90d';
 
 export default function PortfolioPage() {
+  return (
+    <ClientLayout>
+      <PortfolioContent />
+    </ClientLayout>
+  );
+}
+
+function PortfolioContent() {
   const [range, setRange] = useState<TimeRange>('30d');
-  const [portfolio, setPortfolio] = useState<PortfolioSnapshot[]>([]);
-  const [positions, setPositions] = useState<Position[]>([]);
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const {
+    dashboardStats: stats,
+    portfolioHistory,
+    portfolio,
+    positions,
+    isConnected,
+  } = useAppContext();
 
-  /* Generate data based on selected range */
-  useEffect(() => {
-    const days = range === '7d' ? 7 : range === '30d' ? 30 : 90;
-    setPortfolio(generatePortfolioHistory(days));
-    setPositions(generatePositions());
-    setStats(generateDashboardStats());
-  }, [range]);
+  /* Filtrer l'historique selon la plage sélectionnée */
+  const days = range === '7d' ? 7 : range === '30d' ? 30 : 90;
+  const filteredHistory = portfolioHistory.slice(-days);
 
-  if (!stats) {
+  if (!isConnected) {
     return (
-      <ClientLayout>
-        <div className="flex items-center justify-center h-96">
-          <div className="text-accent-green animate-pulse font-mono">
-            Loading portfolio data...
-          </div>
+      <div className="flex items-center justify-center h-96">
+        <div className="text-accent-green animate-pulse font-mono">
+          En attente de connexion au backend...
         </div>
-      </ClientLayout>
+      </div>
     );
   }
 
   /* Prepare P&L bar chart data */
-  const pnlData = portfolio.map((s) => ({
+  const pnlData = filteredHistory.map((s) => ({
     date: formatDate(s.timestamp),
     pnl: s.dailyPnL,
   }));
 
   return (
-    <ClientLayout>
+    <>
       {/* ---- Page header — Retro ASCII ---- */}
       <div className="mb-6">
         <pre className="text-xs text-text-muted font-mono select-none">────────────────────────────────────────</pre>
@@ -96,29 +95,29 @@ export default function PortfolioPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard
           label="Total Value"
-          value={formatCurrency(stats.portfolioValue)}
+          value={formatCurrency(portfolio.totalValue)}
           change={formatPercent(stats.dailyChangePercent)}
           icon={Wallet}
           variant="green"
         />
         <StatCard
           label="Invested"
-          value={formatCurrency(stats.portfolioValue * 0.65)}
+          value={formatCurrency(portfolio.investedValue)}
           icon={PieChart}
           variant="cyan"
         />
         <StatCard
           label="Available Cash"
-          value={formatCurrency(stats.portfolioValue * 0.35)}
+          value={formatCurrency(portfolio.cashBalance)}
           icon={ArrowUpDown}
           variant="amber"
         />
         <StatCard
           label="Total P&L"
-          value={formatCurrency(stats.totalPnL)}
+          value={formatCurrency(portfolio.totalPnL)}
           change={formatPercent(stats.totalPnLPercent)}
           icon={TrendingUp}
-          variant={stats.totalPnL >= 0 ? 'green' : 'red'}
+          variant={portfolio.totalPnL >= 0 ? 'green' : 'red'}
         />
       </div>
 
@@ -151,7 +150,7 @@ export default function PortfolioPage() {
           </div>
         </div>
 
-        <PortfolioChart data={portfolio} height={400} />
+        <PortfolioChart data={filteredHistory} height={400} />
       </div>
 
       {/* ---- Daily P&L bar chart ---- */}
@@ -214,6 +213,6 @@ export default function PortfolioPage() {
         </h2>
         <PositionsList positions={positions} />
       </div>
-    </ClientLayout>
+    </>
   );
 }
