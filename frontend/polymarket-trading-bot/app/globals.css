@@ -1,41 +1,51 @@
 /* ============================================================
-   GLOBALS.CSS — Hacker-style theme for Polymarket Trading Bot
+   GLOBALS.CSS — RETRO CRT Terminal theme for Polymarket Bot
+   
+   Aesthetic: Old-school CRT monitor / green phosphor terminal
+   with modern data visualization. Think 80s hacker movie.
+   
+   Effects:
+   - CRT scanlines overlay (horizontal lines)
+   - Phosphor green text glow
+   - Screen flicker animation
+   - CRT screen curvature on cards
+   - VHS tracking noise
+   - Blinking cursor
+   - Retro pixel borders
    
    Color palette:
-   - Background:   #0a0a0f (deep dark)
-   - Surface:      #12121a (cards, panels)
-   - Border:       #1e1e2e (subtle borders)
-   - Primary:      #00ff88 (neon green — main accent)
-   - Secondary:    #00d4ff (cyan — secondary accent)
-   - Danger:       #ff3366 (red — sell/loss)
-   - Warning:      #ffaa00 (amber — warnings)
-   - Text:         #e0e0e0 (light gray)
-   - Text muted:   #666680 (muted)
-   
-   Fonts: Geist Mono for terminal feel, Geist Sans for readability
+   - Background:   #020a02 (almost-black green-tint)
+   - Surface:      #0a140a (dark green-tinted panels)
+   - Border:       #0f2f0f (green-tinted borders)
+   - Primary:      #00ff41 (classic phosphor green)
+   - Secondary:    #00cc33 (darker phosphor green)
+   - Danger:       #ff0040 (CRT red)
+   - Warning:      #ffb000 (amber phosphor)
+   - Text:         #00ff41 (phosphor green — everything green!)
+   - Text dim:     #00802080 (faded phosphor)
    ============================================================ */
 
 @import "tailwindcss";
 
-/* ---- CSS Variables ---- */
+/* ---- CSS Variables — Retro Phosphor ---- */
 :root {
-  --bg-primary: #0a0a0f;
-  --bg-surface: #12121a;
-  --bg-surface-hover: #1a1a28;
-  --border-color: #1e1e2e;
-  --border-glow: #00ff8833;
-  --accent-green: #00ff88;
-  --accent-green-dim: #00ff8844;
-  --accent-cyan: #00d4ff;
-  --accent-cyan-dim: #00d4ff33;
-  --accent-red: #ff3366;
-  --accent-red-dim: #ff336633;
-  --accent-amber: #ffaa00;
-  --accent-amber-dim: #ffaa0033;
-  --accent-purple: #aa55ff;
-  --text-primary: #e0e0e0;
-  --text-secondary: #9999aa;
-  --text-muted: #666680;
+  --bg-primary: #020a02;
+  --bg-surface: #0a140a;
+  --bg-surface-hover: #0f1f0f;
+  --border-color: #0f2f0f;
+  --border-glow: #00ff4133;
+  --accent-green: #00ff41;
+  --accent-green-dim: #00ff4122;
+  --accent-cyan: #00ffcc;
+  --accent-cyan-dim: #00ffcc22;
+  --accent-red: #ff0040;
+  --accent-red-dim: #ff004022;
+  --accent-amber: #ffb000;
+  --accent-amber-dim: #ffb00022;
+  --accent-purple: #cc44ff;
+  --text-primary: #00ff41;
+  --text-secondary: #00cc33;
+  --text-muted: #00802080;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -62,85 +72,163 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* ---- Base styles ---- */
+/* ---- Base styles — everything looks like a terminal ---- */
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-mono), 'Courier New', monospace;
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
 }
 
-/* ---- Scrollbar — hacker style ---- */
+/* ---- Selection color ---- */
+::selection {
+  background: rgba(0, 255, 65, 0.3);
+  color: #00ff41;
+}
+
+/* ---- Scrollbar — retro style ---- */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: var(--bg-primary);
+  border-left: 1px solid var(--border-color);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--border-color);
-  border-radius: 3px;
+  border: 1px solid #00ff4133;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-green);
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
 }
 
-/* ---- Glow effects ---- */
+/* ---- Phosphor glow effects ---- */
 .glow-green {
-  box-shadow: 0 0 15px var(--accent-green-dim), 0 0 30px rgba(0, 255, 136, 0.1);
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.3), 0 0 20px rgba(0, 255, 65, 0.15), 0 0 40px rgba(0, 255, 65, 0.05), inset 0 0 10px rgba(0, 255, 65, 0.05);
 }
 .glow-cyan {
-  box-shadow: 0 0 15px var(--accent-cyan-dim), 0 0 30px rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3), 0 0 20px rgba(0, 255, 204, 0.1);
 }
 .glow-red {
-  box-shadow: 0 0 15px var(--accent-red-dim), 0 0 30px rgba(255, 51, 102, 0.1);
+  box-shadow: 0 0 10px rgba(255, 0, 64, 0.3), 0 0 20px rgba(255, 0, 64, 0.1);
 }
 
-/* ---- Text glow ---- */
+/* ---- Text glow — phosphor bloom ---- */
 .text-glow-green {
-  text-shadow: 0 0 10px var(--accent-green-dim);
+  text-shadow: 0 0 7px rgba(0, 255, 65, 0.6), 0 0 15px rgba(0, 255, 65, 0.3), 0 0 30px rgba(0, 255, 65, 0.1);
 }
 .text-glow-cyan {
-  text-shadow: 0 0 10px var(--accent-cyan-dim);
+  text-shadow: 0 0 7px rgba(0, 255, 204, 0.6), 0 0 15px rgba(0, 255, 204, 0.3);
 }
 
-/* ---- Card style ---- */
+/* ---- Card style — CRT panel ---- */
 .card {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 2px;
+  position: relative;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 65, 0.015) 2px,
+    rgba(0, 255, 65, 0.015) 4px
+  );
+  pointer-events: none;
+  border-radius: 2px;
+}
 .card:hover {
-  border-color: var(--accent-green-dim);
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.05);
+  border-color: #00ff4144;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.08), inset 0 0 15px rgba(0, 255, 65, 0.02);
 }
 
 /* ---- Pulse animation for live indicators ---- */
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(0, 255, 65, 0.8); }
+  50% { opacity: 0.3; box-shadow: 0 0 2px rgba(0, 255, 65, 0.3); }
 }
 .animate-pulse-dot {
-  animation: pulse-dot 2s ease-in-out infinite;
+  animation: pulse-dot 1.5s ease-in-out infinite;
 }
 
-/* ---- Scanline effect (subtle) ---- */
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
+/* ---- CRT Scanlines overlay (always visible) ---- */
+.scanline-overlay::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 1px,
+    rgba(0, 0, 0, 0.15) 1px,
+    rgba(0, 0, 0, 0.15) 2px
+  );
+  pointer-events: none;
+  z-index: 9998;
 }
+
+/* ---- Moving scanline bar ---- */
 .scanline-overlay::before {
   content: '';
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 4px;
-  background: linear-gradient(transparent, rgba(0, 255, 136, 0.03), transparent);
-  animation: scanline 8s linear infinite;
+  height: 8px;
+  background: linear-gradient(transparent, rgba(0, 255, 65, 0.06), transparent);
+  animation: scanline-move 6s linear infinite;
   pointer-events: none;
   z-index: 9999;
+}
+
+@keyframes scanline-move {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* ---- CRT Screen flicker ---- */
+@keyframes flicker {
+  0% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.8; }
+  94% { opacity: 1; }
+  96% { opacity: 0.9; }
+  97% { opacity: 1; }
+  100% { opacity: 1; }
+}
+.scanline-overlay {
+  animation: flicker 4s infinite;
+}
+
+/* ---- Blinking cursor ---- */
+@keyframes blink-cursor {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.cursor-blink::after {
+  content: '█';
+  animation: blink-cursor 1s step-end infinite;
+  color: var(--accent-green);
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.6);
+}
+
+/* ---- VHS tracking line effect ---- */
+@keyframes vhs-track {
+  0% { transform: translateY(-100vh); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
 }
 
 /* ---- Terminal-style input ---- */
@@ -150,22 +238,91 @@ body {
   color: var(--accent-green);
   font-family: var(--font-mono), 'Courier New', monospace;
   caret-color: var(--accent-green);
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.4);
+  border-radius: 0;
 }
 .terminal-input:focus {
   outline: none;
   border-color: var(--accent-green);
-  box-shadow: 0 0 10px var(--accent-green-dim);
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.2), inset 0 0 10px rgba(0, 255, 65, 0.05);
 }
 .terminal-input::placeholder {
   color: var(--text-muted);
+  text-shadow: none;
+}
+
+/* ---- Retro ASCII-style borders ---- */
+.retro-border {
+  border: 1px solid var(--border-color);
+  box-shadow: 
+    1px 1px 0 var(--border-color),
+    -1px -1px 0 var(--border-color);
+}
+
+/* ---- Retro button ---- */
+.retro-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--accent-green);
+  color: var(--accent-green);
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+  font-family: var(--font-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.15s;
+  border-radius: 0;
+}
+.retro-btn:hover {
+  background: var(--accent-green);
+  color: var(--bg-primary);
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+  text-shadow: none;
 }
 
 /* ---- Chart customizations ---- */
 .recharts-cartesian-grid line {
-  stroke: var(--border-color) !important;
+  stroke: #0f2f0f !important;
 }
 .recharts-text {
-  fill: var(--text-muted) !important;
+  fill: #00802080 !important;
   font-family: var(--font-mono), monospace !important;
   font-size: 11px !important;
+}
+
+/* ---- Retro header decorations ---- */
+.retro-header::before {
+  content: '╔══════════════════════════════════════╗';
+  display: block;
+  color: var(--border-color);
+  font-size: 10px;
+  margin-bottom: 4px;
+  text-shadow: none;
+}
+.retro-header::after {
+  content: '╚══════════════════════════════════════╝';
+  display: block;
+  color: var(--border-color);
+  font-size: 10px;
+  margin-top: 4px;
+  text-shadow: none;
+}
+
+/* ---- Noise texture overlay (very subtle) ---- */
+@keyframes noise {
+  0%, 100% { background-position: 0 0; }
+  10% { background-position: -5% -10%; }
+  30% { background-position: 3% 5%; }
+  50% { background-position: -3% 8%; }
+  70% { background-position: 7% -3%; }
+  90% { background-position: -5% 5%; }
+}
+
+/* ---- Boot-up text effect ---- */
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+.typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typewriter 1.5s steps(40, end);
 }

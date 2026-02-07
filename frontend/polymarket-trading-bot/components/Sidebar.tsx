@@ -70,18 +70,17 @@ export default function Sidebar({ isConnected }: SidebarProps) {
 
   return (
     <aside className="fixed top-0 left-0 z-50 flex h-screen w-64 flex-col border-r border-border bg-surface">
-      {/* ---- Logo / Brand ---- */}
-      <div className="flex items-center gap-3 border-b border-border px-5 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-green-dim">
-          <Bot className="h-5 w-5 text-accent-green" />
-        </div>
-        <div>
-          <h1 className="text-sm font-bold tracking-wider text-accent-green text-glow-green">
-            POLYBOT
-          </h1>
-          <p className="text-[10px] tracking-widest text-text-muted uppercase">
-            Trading Terminal
-          </p>
+      {/* ---- Logo / Brand — Retro ASCII art header ---- */}
+      <div className="border-b border-border px-4 py-4">
+        <pre className="text-[9px] leading-tight text-accent-green text-glow-green font-mono select-none" aria-hidden="true">
+{`╔═══════════════════════╗
+║  ██▓▒░ POLYBOT ░▒▓██  ║
+║   TRADING TERMINAL    ║
+╚═══════════════════════╝`}
+        </pre>
+        <div className="flex items-center gap-2 mt-2">
+          <Bot className="h-4 w-4 text-accent-green" />
+          <span className="text-[10px] text-text-secondary font-mono">v2.4.1 // ONLINE</span>
         </div>
       </div>
 
@@ -96,45 +95,50 @@ export default function Sidebar({ isConnected }: SidebarProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200',
+                'group flex items-center gap-3 px-3 py-2.5 text-sm transition-all duration-200 border border-transparent',
                 isActive
-                  ? 'bg-accent-green-dim text-accent-green glow-green'
-                  : 'text-text-secondary hover:bg-surface-hover hover:text-foreground'
+                  ? 'bg-accent-green-dim text-accent-green glow-green border-accent-green/30'
+                  : 'text-text-secondary hover:bg-surface-hover hover:text-foreground hover:border-accent-green/10'
               )}
             >
+              <span className={cn(
+                'text-xs font-mono',
+                isActive ? 'text-accent-green' : 'text-text-muted'
+              )}>{isActive ? '>' : ' '}</span>
               <Icon
                 className={cn(
                   'h-4 w-4 transition-colors',
-                  isActive ? 'text-accent-green' : 'text-text-muted group-hover:text-accent-cyan'
+                  isActive ? 'text-accent-green' : 'text-text-muted group-hover:text-accent-green'
                 )}
               />
-              <span className="font-medium">{item.label}</span>
+              <span className="font-medium uppercase tracking-wider text-xs">{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      {/* ---- Bot Status Footer ---- */}
+      {/* ---- Bot Status Footer — Retro status panel ---- */}
       <div className="border-t border-border px-4 py-4">
+        <p className="text-[9px] text-text-muted font-mono mb-2 tracking-wider">── STATUS ──</p>
         {/* Connection status */}
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2 mb-2">
           {isConnected ? (
             <>
-              <Wifi className="h-3.5 w-3.5 text-accent-green animate-pulse-dot" />
-              <span className="text-xs text-accent-green">Tunnel Active</span>
+              <span className="h-2 w-2 bg-accent-green animate-pulse-dot" />
+              <span className="text-xs text-accent-green font-mono">[CONNECTED]</span>
             </>
           ) : (
             <>
-              <WifiOff className="h-3.5 w-3.5 text-accent-red" />
-              <span className="text-xs text-accent-red">Disconnected</span>
+              <span className="h-2 w-2 bg-accent-red" />
+              <span className="text-xs text-accent-red font-mono">[OFFLINE]</span>
             </>
           )}
         </div>
 
         {/* Mode badge */}
-        <div className="flex items-center gap-2">
-          <Shield className="h-3.5 w-3.5 text-accent-amber" />
-          <span className="text-xs text-accent-amber">Paper Trading</span>
+        <div className="flex items-center gap-2 mb-2">
+          <Shield className="h-3 w-3 text-accent-amber" />
+          <span className="text-xs text-accent-amber font-mono">[PAPER MODE]</span>
         </div>
 
         {/* Version */}

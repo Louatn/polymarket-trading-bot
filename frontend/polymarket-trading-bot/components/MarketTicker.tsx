@@ -22,40 +22,35 @@ export default function MarketTicker({ markets }: MarketTickerProps) {
   const doubled = [...markets, ...markets];
 
   return (
-    <div className="w-full overflow-hidden border-b border-border bg-surface py-2">
-      <div className="flex animate-[scroll_30s_linear_infinite] gap-8 whitespace-nowrap">
+    <div className="w-full overflow-hidden border-b border-border bg-surface py-1.5">
+      {/* Retro ticker decorations */}
+      <div className="flex animate-[scroll_30s_linear_infinite] gap-6 whitespace-nowrap font-mono">
         {doubled.map((market, i) => {
           /* Simulate a random price change for visual effect */
           const changePercent = ((Math.random() - 0.45) * 10).toFixed(2);
           const isUp = parseFloat(changePercent) >= 0;
 
           return (
-            <div key={`${market.id}_${i}`} className="flex items-center gap-2 flex-shrink-0">
-              {/* Category dot */}
-              <span className={cn(
-                'h-1.5 w-1.5 rounded-full',
-                market.category === 'crypto' ? 'bg-accent-amber' :
-                market.category === 'politics' ? 'bg-accent-cyan' :
-                market.category === 'sports' ? 'bg-accent-purple' :
-                'bg-accent-green'
-              )} />
+            <div key={`${market.id}_${i}`} className="flex items-center gap-1.5 flex-shrink-0">
+              {/* Separator */}
+              <span className="text-text-muted text-[10px]">│</span>
 
               {/* Market name (truncated) */}
-              <span className="text-xs text-text-secondary max-w-[180px] truncate">
+              <span className="text-[11px] text-text-secondary max-w-[160px] truncate">
                 {market.question}
               </span>
 
               {/* Price */}
-              <span className="text-xs font-bold font-mono text-foreground">
+              <span className="text-[11px] font-bold text-foreground">
                 {(market.currentPrice * 100).toFixed(1)}¢
               </span>
 
-              {/* Change */}
+              {/* Change — retro arrows */}
               <span className={cn(
-                'text-[11px] font-mono font-bold',
+                'text-[11px] font-bold',
                 isUp ? 'text-accent-green' : 'text-accent-red'
               )}>
-                {isUp ? '▲' : '▼'} {Math.abs(parseFloat(changePercent))}%
+                {isUp ? '▲' : '▼'}{Math.abs(parseFloat(changePercent))}%
               </span>
             </div>
           );

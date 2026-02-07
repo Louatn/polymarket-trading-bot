@@ -80,14 +80,16 @@ export default function PortfolioPage() {
 
   return (
     <ClientLayout>
-      {/* ---- Page header ---- */}
+      {/* ---- Page header — Retro ASCII ---- */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">
-          <span className="text-accent-green">$</span> Portfolio
+        <pre className="text-xs text-text-muted font-mono select-none">────────────────────────────────────────</pre>
+        <h1 className="text-xl font-bold tracking-widest text-glow-green font-mono">
+          {'>'} PORTFOLIO_
         </h1>
-        <p className="text-sm text-text-muted mt-1">
-          Detailed portfolio analysis and position management
+        <p className="text-xs text-text-secondary mt-1 font-mono">
+          // Detailed portfolio analysis and position management
         </p>
+        <pre className="text-xs text-text-muted font-mono select-none">────────────────────────────────────────</pre>
       </div>
 
       {/* ---- Stats row ---- */}
@@ -123,9 +125,11 @@ export default function PortfolioPage() {
       {/* ---- Main chart with time range selector ---- */}
       <div className="card p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
-            <LineChart className="h-4 w-4 text-accent-green" />
-            Portfolio Value Over Time
+          <h2 className="text-xs font-bold text-foreground flex items-center gap-2 font-mono">
+            <span className="text-text-muted">[</span>
+            <LineChart className="h-3.5 w-3.5 text-accent-green" />
+            VALUE_CHART
+            <span className="text-text-muted">]</span>
           </h2>
 
           {/* Time range buttons */}
@@ -152,42 +156,45 @@ export default function PortfolioPage() {
 
       {/* ---- Daily P&L bar chart ---- */}
       <div className="card p-6 mb-6">
-        <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-accent-cyan" />
-          Daily P&L
+        <h2 className="text-xs font-bold text-foreground mb-4 flex items-center gap-2 font-mono">
+          <span className="text-text-muted">[</span>
+          <TrendingUp className="h-3.5 w-3.5 text-accent-cyan" />
+          DAILY_PNL
+          <span className="text-text-muted">]</span>
         </h2>
 
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={pnlData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e1e2e" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#0f2f0f" />
             <XAxis
               dataKey="date"
-              stroke="#666680"
-              tick={{ fill: '#666680', fontSize: 11 }}
+              stroke="#00802080"
+              tick={{ fill: '#00802080', fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: '#1e1e2e' }}
+              axisLine={{ stroke: '#0f2f0f' }}
             />
             <YAxis
-              stroke="#666680"
-              tick={{ fill: '#666680', fontSize: 11 }}
+              stroke="#00802080"
+              tick={{ fill: '#00802080', fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: '#1e1e2e' }}
+              axisLine={{ stroke: '#0f2f0f' }}
               tickFormatter={(v) => `$${v.toFixed(0)}`}
             />
             <Tooltip
               contentStyle={{
-                background: '#12121a',
-                border: '1px solid #1e1e2e',
-                borderRadius: '8px',
-                color: '#e0e0e0',
+                background: '#0a140a',
+                border: '1px solid #0f2f0f',
+                borderRadius: '0px',
+                color: '#00ff41',
                 fontSize: '12px',
+                fontFamily: 'monospace',
               }}
               formatter={(value: any) => [formatCurrency(Number(value ?? 0)), 'P&L']}
             />
             <Bar
               dataKey="pnl"
-              fill="#00ff88"
-              radius={[4, 4, 0, 0]}
+              fill="#00ff41"
+              radius={[0, 0, 0, 0]}
               // Color bars based on positive/negative
               // (Recharts doesn't natively support per-bar colors easily,
               //  so we use a custom shape)
@@ -198,10 +205,12 @@ export default function PortfolioPage() {
 
       {/* ---- Active Positions ---- */}
       <div>
-        <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-          <PieChart className="h-4 w-4 text-accent-green" />
-          Active Positions
-          <span className="text-xs text-text-muted font-normal">— {positions.length} open</span>
+        <h2 className="text-xs font-bold text-foreground mb-4 flex items-center gap-2 font-mono">
+          <span className="text-text-muted">[</span>
+          <PieChart className="h-3.5 w-3.5 text-accent-green" />
+          POSITIONS
+          <span className="text-text-muted">]</span>
+          <span className="text-[10px] text-text-muted font-normal">// {positions.length} open</span>
         </h2>
         <PositionsList positions={positions} />
       </div>

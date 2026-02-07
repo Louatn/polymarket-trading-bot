@@ -57,35 +57,32 @@ export default function StatCard({ label, value, change, icon: Icon, variant = '
 
   return (
     <div className="card p-4">
-      <div className="flex items-start justify-between">
-        {/* Icon */}
-        <div className={cn('flex h-10 w-10 items-center justify-center rounded-lg', styles.iconBg)}>
-          <Icon className={cn('h-5 w-5', styles.iconColor)} />
-        </div>
-
-        {/* Change indicator */}
+      {/* Retro top bar */}
+      <div className="flex items-center gap-1 mb-3 pb-2 border-b border-border">
+        <Icon className={cn('h-3.5 w-3.5', styles.iconColor)} />
+        <span className="text-[10px] text-text-muted uppercase tracking-widest font-mono">
+          {label}
+        </span>
         {change && (
           <span
             className={cn(
-              'text-xs font-mono font-medium px-2 py-0.5 rounded',
-              isPositive
-                ? 'text-accent-green bg-accent-green-dim'
-                : 'text-accent-red bg-accent-red-dim'
+              'text-[10px] font-mono font-bold ml-auto',
+              isPositive ? 'text-accent-green' : 'text-accent-red'
             )}
           >
-            {change}
+            [{change}]
           </span>
         )}
       </div>
 
-      {/* Value */}
-      <p className="mt-3 text-2xl font-bold tracking-tight text-foreground font-mono">
+      {/* Value — big phosphor display */}
+      <p className="text-2xl font-bold tracking-tight font-mono text-glow-green">
         {value}
       </p>
 
-      {/* Label */}
-      <p className="mt-1 text-xs text-text-muted uppercase tracking-wider">
-        {label}
+      {/* Retro bottom decoration */}
+      <p className="mt-2 text-[9px] text-text-muted font-mono">
+        {'░'.repeat(20)}
       </p>
     </div>
   );

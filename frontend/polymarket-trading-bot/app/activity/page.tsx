@@ -67,14 +67,16 @@ export default function ActivityPage() {
 
   return (
     <ClientLayout>
-      {/* ---- Page header ---- */}
+      {/* ---- Page header — Retro ASCII ---- */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">
-          <span className="text-accent-green">$</span> Activity Feed
+        <pre className="text-xs text-text-muted font-mono select-none">────────────────────────────────────────</pre>
+        <h1 className="text-xl font-bold tracking-widest text-glow-green font-mono">
+          {'>'} ACTIVITY_FEED_
         </h1>
-        <p className="text-sm text-text-muted mt-1">
-          Real-time system logs and bot activity monitor
+        <p className="text-xs text-text-secondary mt-1 font-mono">
+          // Real-time system logs and bot activity monitor
         </p>
+        <pre className="text-xs text-text-muted font-mono select-none">────────────────────────────────────────</pre>
       </div>
 
       {/* ---- Filter bar ---- */}

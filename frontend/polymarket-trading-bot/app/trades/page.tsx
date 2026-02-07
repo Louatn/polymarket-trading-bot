@@ -57,14 +57,16 @@ export default function TradesPage() {
 
   return (
     <ClientLayout>
-      {/* ---- Page header ---- */}
+      {/* ---- Page header — Retro ASCII ---- */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">
-          <span className="text-accent-green">$</span> Trade History
+        <pre className="text-xs text-text-muted font-mono select-none">────────────────────────────────────────</pre>
+        <h1 className="text-xl font-bold tracking-widest text-glow-green font-mono">
+          {'>'} TRADE_HISTORY_
         </h1>
-        <p className="text-sm text-text-muted mt-1">
-          Complete log of all AI trading decisions and executions
+        <p className="text-xs text-text-secondary mt-1 font-mono">
+          // Complete log of all AI trading decisions
         </p>
+        <pre className="text-xs text-text-muted font-mono select-none">────────────────────────────────────────</pre>
       </div>
 
       {/* ---- Summary stats ---- */}
@@ -103,11 +105,13 @@ export default function TradesPage() {
 
       {/* ---- Trade table ---- */}
       <div className="card p-6">
-        <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-          <History className="h-4 w-4 text-accent-green" />
-          All Trades
-          <span className="text-xs text-text-muted font-normal">
-            — Click a row to see AI reasoning
+        <h2 className="text-xs font-bold text-foreground mb-4 flex items-center gap-2 font-mono">
+          <span className="text-text-muted">[</span>
+          <History className="h-3.5 w-3.5 text-accent-green" />
+          ALL_TRADES
+          <span className="text-text-muted">]</span>
+          <span className="text-[10px] text-text-muted font-normal ml-2">
+            // Click row for AI reasoning
           </span>
         </h2>
         <TradeTable trades={trades} />

@@ -84,8 +84,14 @@ export default function DashboardPage() {
     return (
       <ClientLayout>
         <div className="flex items-center justify-center h-96">
-          <div className="text-accent-green animate-pulse font-mono">
-            Initializing terminal...
+          <div className="text-accent-green font-mono text-glow-green">
+            <pre className="text-xs">{`
+> INITIALIZING POLYBOT TERMINAL...
+> LOADING KERNEL MODULES......... [OK]
+> CONNECTING TO MARKET FEED...... [OK]
+> LOADING PORTFOLIO DATA.........
+            `}</pre>
+            <span className="cursor-blink text-accent-green"> </span>
           </div>
         </div>
       </ClientLayout>
@@ -94,14 +100,16 @@ export default function DashboardPage() {
 
   return (
     <ClientLayout>
-      {/* ---- Page header ---- */}
+      {/* ---- Page header — Retro ASCII ---- */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">
-          <span className="text-accent-green">$</span> Dashboard
+        <pre className="text-xs text-text-muted font-mono select-none">────────────────────────────────────────</pre>
+        <h1 className="text-xl font-bold tracking-widest text-glow-green font-mono">
+          {'>'} DASHBOARD_
         </h1>
-        <p className="text-sm text-text-muted mt-1">
-          Real-time overview of your AI trading operations
+        <p className="text-xs text-text-secondary mt-1 font-mono">
+          // Real-time overview of AI trading operations
         </p>
+        <pre className="text-xs text-text-muted font-mono select-none">────────────────────────────────────────</pre>
       </div>
 
       {/* ---- Stat cards grid ---- */}
@@ -167,19 +175,24 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         {/* Portfolio chart — takes 2/3 of the width */}
         <div className="lg:col-span-2 card p-4">
-          <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-accent-green" />
-            Portfolio Performance
-            <span className="text-xs text-text-muted font-normal">— 30 days</span>
+          <h2 className="text-xs font-bold text-foreground mb-4 flex items-center gap-2 font-mono">
+            <span className="text-text-muted">[</span>
+            <TrendingUp className="h-3.5 w-3.5 text-accent-green" />
+            PORTFOLIO_PERF
+            <span className="text-text-muted">]</span>
+            <span className="text-[10px] text-text-muted font-normal">// 30 days</span>
           </h2>
           <PortfolioChart data={portfolio} height={300} />
         </div>
 
         {/* Activity feed — takes 1/3 */}
         <div className="card p-4 max-h-[420px] overflow-y-auto">
-          <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-            <Activity className="h-4 w-4 text-accent-cyan" />
-            Live Activity
+          <h2 className="text-xs font-bold text-foreground mb-4 flex items-center gap-2 font-mono">
+            <span className="text-text-muted">[</span>
+            <Activity className="h-3.5 w-3.5 text-accent-cyan" />
+            LIVE_FEED
+            <span className="text-text-muted">]</span>
+            <span className="h-1.5 w-1.5 bg-accent-green animate-pulse-dot ml-auto" />
           </h2>
           <ActivityFeed logs={logs} maxItems={10} />
         </div>
@@ -187,18 +200,22 @@ export default function DashboardPage() {
 
       {/* ---- Positions ---- */}
       <div className="mb-6">
-        <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-          <BarChart3 className="h-4 w-4 text-accent-green" />
-          Active Positions
+        <h2 className="text-xs font-bold text-foreground mb-4 flex items-center gap-2 font-mono">
+          <span className="text-text-muted">[</span>
+          <BarChart3 className="h-3.5 w-3.5 text-accent-green" />
+          ACTIVE_POSITIONS
+          <span className="text-text-muted">]</span>
         </h2>
         <PositionsList positions={positions} />
       </div>
 
       {/* ---- Recent Trades ---- */}
       <div>
-        <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-          <Zap className="h-4 w-4 text-accent-amber" />
-          Recent Trades
+        <h2 className="text-xs font-bold text-foreground mb-4 flex items-center gap-2 font-mono">
+          <span className="text-text-muted">[</span>
+          <Zap className="h-3.5 w-3.5 text-accent-amber" />
+          RECENT_TRADES
+          <span className="text-text-muted">]</span>
         </h2>
         <TradeTable trades={trades} />
       </div>

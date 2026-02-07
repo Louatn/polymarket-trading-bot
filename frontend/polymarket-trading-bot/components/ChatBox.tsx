@@ -48,11 +48,13 @@ export default function ChatBox({ messages, onSendMessage, isTyping }: ChatBoxPr
 
   return (
     <div className="flex flex-col h-full">
-      {/* ---- Chat header ---- */}
+      {/* ---- Chat header — Retro terminal bar ---- */}
       <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
-        <Terminal className="h-4 w-4 text-accent-green" />
-        <span className="text-sm font-bold text-accent-green">POLYBOT TERMINAL</span>
-        <span className="text-xs text-text-muted ml-auto">Secure Channel</span>
+        <span className="h-2.5 w-2.5 bg-accent-red" />
+        <span className="h-2.5 w-2.5 bg-accent-amber" />
+        <span className="h-2.5 w-2.5 bg-accent-green" />
+        <span className="text-xs font-mono text-accent-green ml-2 text-glow-green">POLYBOT://SECURE_CHANNEL</span>
+        <span className="text-[10px] text-text-muted ml-auto font-mono">[ENCRYPTED]</span>
       </div>
 
       {/* ---- Messages area ---- */}
@@ -70,22 +72,20 @@ export default function ChatBox({ messages, onSendMessage, isTyping }: ChatBoxPr
           >
             {/* Avatar */}
             <div className={cn(
-              'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full',
-              msg.sender === 'BOT' ? 'bg-accent-green-dim' : 'bg-accent-cyan-dim'
+              'flex h-8 w-8 flex-shrink-0 items-center justify-center',
+              msg.sender === 'BOT' ? 'text-accent-green' : 'text-accent-cyan'
             )}>
-              {msg.sender === 'BOT' ? (
-                <Bot className="h-4 w-4 text-accent-green" />
-              ) : (
-                <User className="h-4 w-4 text-accent-cyan" />
-              )}
+              <span className="text-xs font-mono font-bold">
+                {msg.sender === 'BOT' ? '[B]' : '[U]'}
+              </span>
             </div>
 
-            {/* Message bubble */}
+            {/* Message bubble — retro terminal style */}
             <div className={cn(
-              'max-w-[75%] rounded-lg px-4 py-3',
+              'max-w-[75%] px-4 py-3 border',
               msg.sender === 'BOT'
-                ? 'bg-surface border border-border'
-                : 'bg-accent-cyan-dim border border-accent-cyan/20'
+                ? 'bg-surface border-border'
+                : 'bg-accent-green-dim border-accent-green/20'
             )}>
               <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
                 {msg.content}
@@ -100,10 +100,8 @@ export default function ChatBox({ messages, onSendMessage, isTyping }: ChatBoxPr
         {/* Typing indicator */}
         {isTyping && (
           <div className="flex items-start gap-3">
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent-green-dim">
-              <Bot className="h-4 w-4 text-accent-green" />
-            </div>
-            <div className="bg-surface border border-border rounded-lg px-4 py-3">
+            <span className="text-xs font-mono text-accent-green">[B]</span>
+            <div className="bg-surface border border-border px-4 py-3">
               <div className="flex gap-1">
                 <span className="w-2 h-2 bg-accent-green rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                 <span className="w-2 h-2 bg-accent-green rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -134,10 +132,10 @@ export default function ChatBox({ messages, onSendMessage, isTyping }: ChatBoxPr
             type="submit"
             disabled={!input.trim()}
             className={cn(
-              'flex h-10 w-10 items-center justify-center rounded-lg transition-all',
+              'flex h-10 w-10 items-center justify-center transition-all retro-btn',
               input.trim()
-                ? 'bg-accent-green text-black hover:bg-accent-green/80'
-                : 'bg-surface text-text-muted cursor-not-allowed'
+                ? 'border-accent-green text-accent-green hover:bg-accent-green hover:text-black'
+                : 'border-border text-text-muted cursor-not-allowed'
             )}
           >
             <Send className="h-4 w-4" />
