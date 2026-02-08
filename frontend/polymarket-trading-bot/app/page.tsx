@@ -112,17 +112,19 @@ function DashboardContent() {
         />
       </div>
 
-      {/* ---- Second row: more stats ---- */}
+      {/* ---- Second row: more stats (only show if data available) ---- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard
-          label="Sharpe Ratio"
-          value={stats.sharpeRatio.toFixed(2)}
-          icon={Award}
-          variant="cyan"
-        />
+        {stats.sharpeRatio !== 0 && (
+          <StatCard
+            label="Sharpe Ratio"
+            value={stats.sharpeRatio.toFixed(2)}
+            icon={Award}
+            variant="cyan"
+          />
+        )}
         <StatCard
           label="Max Drawdown"
-          value={`-${stats.maxDrawdown}%`}
+          value={stats.maxDrawdown > 0 ? `-${stats.maxDrawdown}%` : '—'}
           icon={Shield}
           variant="red"
         />
@@ -150,7 +152,13 @@ function DashboardContent() {
             Portfolio Performance
             <span className="text-xs text-text-muted font-normal">— live</span>
           </h2>
-          <PortfolioChart data={portfolio} height={300} />
+          {portfolio.length > 0 ? (
+            <PortfolioChart data={portfolio} height={300} />
+          ) : (
+            <div className="flex items-center justify-center h-[300px] text-text-muted font-mono text-xs">
+              ░░░ EN ATTENTE DE DONNÉES HISTORIQUES... ░░░
+            </div>
+          )}
         </div>
 
         {/* Activity feed */}
@@ -159,27 +167,37 @@ function DashboardContent() {
             <Activity className="h-4 w-4 text-accent-cyan" />
             Live Activity
           </h2>
-          <ActivityFeed logs={logs} maxItems={10} />
+          {logs.length > 0 ? (
+            <ActivityFeed logs={logs} maxItems={10} />
+          ) : (
+            <p className="text-xs text-text-muted font-mono text-center py-8">
+              Aucune activité enregistrée
+            </p>
+          )}
         </div>
       </div>
 
       {/* ---- Positions ---- */}
-      <div className="mb-6">
-        <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-          <BarChart3 className="h-4 w-4 text-accent-green" />
-          Active Positions
-        </h2>
-        <PositionsList positions={positions} />
-      </div>
+      {positions.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 text-accent-green" />
+            Active Positions
+          </h2>
+          <PositionsList positions={positions} />
+        </div>
+      )}
 
       {/* ---- Recent Trades ---- */}
-      <div>
-        <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-          <Zap className="h-4 w-4 text-accent-amber" />
-          Recent Trades
-        </h2>
-        <TradeTable trades={trades.slice(0, 10)} />
-      </div>
+      {trades.length > 0 && (
+        <div>
+          <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+            <Zap className="h-4 w-4 text-accent-amber" />
+            Recent Trades
+          </h2>
+          <TradeTable trades={trades.slice(0, 10)} />
+        </div>
+      )}
     </>
   );
 }

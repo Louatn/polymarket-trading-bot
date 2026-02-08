@@ -78,7 +78,9 @@ export default function Sidebar() {
         </pre>
         <div className="flex items-center gap-2 mt-2">
           <Bot className="h-4 w-4 text-accent-green" />
-          <span className="text-[10px] text-text-secondary font-mono">v2.4.1 // ONLINE</span>
+          <span className="text-[10px] text-text-secondary font-mono">
+            {botStatus.version} // {isConnected ? 'ONLINE' : 'OFFLINE'}
+          </span>
         </div>
       </div>
 

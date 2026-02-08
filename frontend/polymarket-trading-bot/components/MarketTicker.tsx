@@ -10,7 +10,6 @@
 
 'use client';
 
-import { cn } from '@/lib/utils';
 import { useAppContext } from '@/components/ClientLayout';
 
 export default function MarketTicker() {
@@ -35,10 +34,6 @@ export default function MarketTicker() {
       {/* Retro ticker decorations */}
       <div className="flex animate-[scroll_30s_linear_infinite] gap-6 whitespace-nowrap font-mono">
         {doubled.map((market, i) => {
-          /* Simulate a random price change for visual effect */
-          const changePercent = ((Math.random() - 0.45) * 10).toFixed(2);
-          const isUp = parseFloat(changePercent) >= 0;
-
           return (
             <div key={`${market.id}_${i}`} className="flex items-center gap-1.5 flex-shrink-0">
               {/* Separator */}
@@ -54,13 +49,12 @@ export default function MarketTicker() {
                 {(market.currentPrice * 100).toFixed(1)}¢
               </span>
 
-              {/* Change — retro arrows */}
-              <span className={cn(
-                'text-[11px] font-bold',
-                isUp ? 'text-accent-green' : 'text-accent-red'
-              )}>
-                {isUp ? '▲' : '▼'}{Math.abs(parseFloat(changePercent))}%
-              </span>
+              {/* Volume if available */}
+              {market.volume24h > 0 && (
+                <span className="text-[10px] text-text-muted">
+                  Vol: ${(market.volume24h / 1000).toFixed(0)}K
+                </span>
+              )}
             </div>
           );
         })}

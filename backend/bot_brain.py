@@ -11,8 +11,8 @@ class BotBrain:
             return {"action": "HOLD", "confidence": 0, "reasoning": "Waiting for signal"}
 
         side = "YES" if random.random() > 0.5 else "NO"
-        action = "BUY" # On fait surtout du BUY pour tester
-        
+        action = "BUY"
+
         reasons = [
             "Volume spike detected indicating institutional interest.",
             "Sentiment analysis on X shows positive momentum.",

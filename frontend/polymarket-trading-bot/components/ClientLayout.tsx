@@ -36,6 +36,7 @@ import {
   DashboardStats,
   ChatMessage,
   TunnelMessage,
+  DecisionStats,
 } from '@/lib/types';
 
 // --- CONFIGURATION API ---
@@ -52,6 +53,8 @@ interface AppContextType {
   positions: Position[];
   markets: Market[];
   dashboardStats: DashboardStats;
+  decisionStats: DecisionStats;
+  chatHistory: ChatMessage[];
   isConnected: boolean;
   sendChatMessage: (content: string) => Promise<ChatMessage | null>;
 }
@@ -99,6 +102,14 @@ const INITIAL_STATS: DashboardStats = {
   maxDrawdown: 0,
 };
 
+const INITIAL_DECISION_STATS: DecisionStats = {
+  total_decisions: 0,
+  buys: 0,
+  sells: 0,
+  holds: 0,
+  executed: 0,
+};
+
 // --- COMPOSANT CLIENT LAYOUT ---
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   // États React — alimentés par le polling /api/tick
@@ -110,6 +121,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const [positions, setPositions] = useState<Position[]>([]);
   const [markets, setMarkets] = useState<Market[]>([]);
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>(INITIAL_STATS);
+  const [decisionStats, setDecisionStats] = useState<DecisionStats>(INITIAL_DECISION_STATS);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [isConnected, setIsConnected] = useState(false);
 
   // --- PROCESSEUR D'ÉVÉNEMENTS (TunnelMessage) ---
@@ -262,9 +275,59 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     if (isConnected) fetchLogs();
   }, [isConnected]);
 
+  // --- Récupération initiale de l'historique de chat ---
+  useEffect(() => {
+    const fetchChatHistory = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/chat/history`, {
+          headers: { 'ngrok-skip-browser-warning': 'true' },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) setChatHistory(data);
+        }
+      } catch {
+        /* Le tick prendra le relais */
+      }
+    };
+    if (isConnected) fetchChatHistory();
+  }, [isConnected]);
+
+  // --- Récupération des stats de décisions (polling léger) ---
+  useEffect(() => {
+    const fetchDecisionStats = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/decisions/stats`, {
+          headers: { 'ngrok-skip-browser-warning': 'true' },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setDecisionStats(data);
+        }
+      } catch {
+        /* ignore */
+      }
+    };
+    if (isConnected) fetchDecisionStats();
+    // Refresh decision stats every 5s
+    const interval = setInterval(() => {
+      if (isConnected) fetchDecisionStats();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isConnected]);
+
   // --- Envoi d'un message au bot via API ---
   const sendChatMessage = useCallback(async (content: string): Promise<ChatMessage | null> => {
     try {
+      // Add user message to local chat history immediately
+      const userMsg: ChatMessage = {
+        id: `user_${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        sender: 'USER',
+        content,
+      };
+      setChatHistory(prev => [...prev, userMsg]);
+
       const res = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         headers: {
@@ -275,7 +338,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       });
       if (!res.ok) throw new Error(`Chat API Error ${res.status}`);
       const data = await res.json();
-      return data as ChatMessage;
+      const botMsg = data as ChatMessage;
+      setChatHistory(prev => [...prev, botMsg]);
+      return botMsg;
     } catch (error) {
       console.error('⚠️ Chat API error:', error);
       return null;
@@ -292,6 +357,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     positions,
     markets,
     dashboardStats,
+    decisionStats,
+    chatHistory,
     isConnected,
     sendChatMessage,
   };

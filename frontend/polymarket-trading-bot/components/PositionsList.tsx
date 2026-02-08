@@ -19,6 +19,16 @@ interface PositionsListProps {
 }
 
 export default function PositionsList({ positions }: PositionsListProps) {
+  if (positions.length === 0) {
+    return (
+      <div className="card p-6 text-center">
+        <p className="text-xs text-text-muted font-mono">
+          ░░░ AUCUNE POSITION OUVERTE ░░░
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-2">
       {positions.map((pos) => {

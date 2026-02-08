@@ -12,7 +12,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   ArrowUpCircle,
   ArrowDownCircle,
@@ -52,6 +52,16 @@ export default function TradeTable({ trades }: TradeTableProps) {
 
   /* Apply filter */
   const filtered = filter === 'ALL' ? trades : trades.filter((t) => t.action === filter);
+
+  if (trades.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-xs text-text-muted font-mono">
+          ░░░ AUCUN TRADE EXÉCUTÉ ░░░
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -96,9 +106,8 @@ export default function TradeTable({ trades }: TradeTableProps) {
           </thead>
           <tbody>
             {filtered.map((trade) => (
-              <>
+              <React.Fragment key={trade.id}>
                 <tr
-                  key={trade.id}
                   className="border-b border-border hover:bg-surface-hover transition-colors cursor-pointer"
                   onClick={() => setExpandedId(expandedId === trade.id ? null : trade.id)}
                 >
@@ -108,7 +117,7 @@ export default function TradeTable({ trades }: TradeTableProps) {
                   <td className="px-4 py-3">
                     <ActionBadge action={trade.action} />
                   </td>
-                  <td className="px-4 py-3 text-xs text-foreground max-w-[200px] truncate" title={trade.marketQuestion}>
+                  <td className="px-4 py-3 text-xs text-foreground max-w-50 truncate" title={trade.marketQuestion}>
                     {trade.marketQuestion}
                   </td>
                   <td className="px-4 py-3">
@@ -164,7 +173,7 @@ export default function TradeTable({ trades }: TradeTableProps) {
                   <tr key={`${trade.id}_detail`} className="bg-surface">
                     <td colSpan={10} className="px-6 py-4">
                       <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 mt-0.5 h-6 w-6 rounded-full bg-accent-cyan-dim flex items-center justify-center">
+                        <div className="shrink-0 mt-0.5 h-6 w-6 rounded-full bg-accent-cyan-dim flex items-center justify-center">
                           <span className="text-[10px] text-accent-cyan font-bold">AI</span>
                         </div>
                         <div>
@@ -179,7 +188,7 @@ export default function TradeTable({ trades }: TradeTableProps) {
                     </td>
                   </tr>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </tbody>
         </table>

@@ -73,7 +73,7 @@ export interface BotStatus {
   totalTrades: number;          // Total trades executed
   winRate: number;              // Win rate percentage
   activePositions: number;      // Number of active positions
-  mode: 'LIVE' | 'PAPER';      // Trading mode
+  mode: string;                 // Trading mode (PAPER, LIVE, LIVE_SIM, etc.)
   version: string;              // Bot version
 }
 
@@ -115,4 +115,27 @@ export interface TunnelMessage {
   type: 'TRADE_EXECUTED' | 'PORTFOLIO_UPDATE' | 'BOT_STATUS' | 'CHAT_RESPONSE' | 'ACTIVITY_LOG' | 'MARKET_UPDATE';
   payload: Trade | PortfolioSnapshot | BotStatus | ChatMessage | ActivityLog | Market;
   timestamp: string;
+}
+
+/* ---- Bot decision record (from /api/decisions) ---- */
+export interface BotDecision {
+  id: string;
+  timestamp: string;
+  market_id: string;
+  market_question: string;
+  action: TradeAction;
+  side: 'YES' | 'NO' | null;
+  confidence: number;
+  reasoning: string;
+  was_executed: number;           // 1 = executed, 0 = not
+  execution_result: string | null;
+}
+
+/* ---- Decision statistics ---- */
+export interface DecisionStats {
+  total_decisions: number;
+  buys: number;
+  sells: number;
+  holds: number;
+  executed: number;
 }

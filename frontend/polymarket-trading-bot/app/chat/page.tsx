@@ -39,18 +39,29 @@ export default function ChatPage() {
 }
 
 function ChatContent() {
-  const { sendChatMessage, isConnected } = useAppContext();
+  const { sendChatMessage, isConnected, chatHistory } = useAppContext();
 
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: 'initial',
-      timestamp: new Date().toISOString(),
-      sender: 'BOT',
-      content:
-        'Welcome to the POLYBOT Trading Terminal. I\'m your AI trading assistant operating on Polymarket. You can ask me about my current strategy, portfolio performance, market analysis, or risk management. How can I help you?',
-    },
-  ]);
+  /* Local messages = DB history + session messages */
+  const [sessionMessages, setSessionMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+
+  /* Merge: DB history first, then any session-only messages (avoids duplicates) */
+  const allMessages = (() => {
+    const dbIds = new Set(chatHistory.map(m => m.id));
+    const extra = sessionMessages.filter(m => !dbIds.has(m.id));
+    const merged = [...chatHistory, ...extra];
+    // If no messages at all, show initial welcome
+    if (merged.length === 0) {
+      return [{
+        id: 'initial',
+        timestamp: new Date().toISOString(),
+        sender: 'BOT' as const,
+        content:
+          'Welcome to the POLYBOT Trading Terminal. I\'m your AI trading assistant operating on Polymarket. You can ask me about my current strategy, portfolio performance, market analysis, or risk management. How can I help you?',
+      }];
+    }
+    return merged;
+  })();
 
   /* Handle sending a message — appelle le backend via API */
   const handleSendMessage = useCallback(async (content: string) => {
@@ -61,15 +72,15 @@ function ChatContent() {
       sender: 'USER',
       content,
     };
-    setMessages((prev) => [...prev, userMsg]);
+    setSessionMessages((prev) => [...prev, userMsg]);
     setIsTyping(true);
 
     /* Envoyer au backend Python */
     const botResponse = await sendChatMessage(content);
 
     if (botResponse) {
-      /* Réponse reçue du backend */
-      setMessages((prev) => [...prev, botResponse]);
+      /* Réponse reçue du backend — already added to chatHistory via context */
+      setSessionMessages((prev) => [...prev, botResponse]);
     } else {
       /* Erreur — message de fallback */
       const errorMsg: ChatMessage = {
@@ -78,7 +89,7 @@ function ChatContent() {
         sender: 'BOT',
         content: '⚠️ Impossible de joindre le backend. Vérifiez que le serveur Python est lancé.',
       };
-      setMessages((prev) => [...prev, errorMsg]);
+      setSessionMessages((prev) => [...prev, errorMsg]);
     }
 
     setIsTyping(false);
@@ -102,7 +113,7 @@ function ChatContent() {
         {/* ---- Chat window (3/4 of the width) ---- */}
         <div className="lg:col-span-3 card h-[calc(100vh-220px)] flex flex-col">
           <ChatBox
-            messages={messages}
+            messages={allMessages}
             onSendMessage={handleSendMessage}
             isTyping={isTyping}
           />

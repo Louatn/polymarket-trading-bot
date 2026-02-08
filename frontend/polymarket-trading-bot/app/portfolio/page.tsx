@@ -150,57 +150,62 @@ function PortfolioContent() {
           </div>
         </div>
 
-        <PortfolioChart data={filteredHistory} height={400} />
+        {filteredHistory.length > 0 ? (
+          <PortfolioChart data={filteredHistory} height={400} />
+        ) : (
+          <div className="flex items-center justify-center h-[400px] text-text-muted font-mono text-xs">
+            ░░░ EN ATTENTE DE DONNÉES HISTORIQUES... ░░░
+          </div>
+        )}
       </div>
 
       {/* ---- Daily P&L bar chart ---- */}
-      <div className="card p-6 mb-6">
-        <h2 className="text-xs font-bold text-foreground mb-4 flex items-center gap-2 font-mono">
-          <span className="text-text-muted">[</span>
-          <TrendingUp className="h-3.5 w-3.5 text-accent-cyan" />
-          DAILY_PNL
-          <span className="text-text-muted">]</span>
-        </h2>
+      {pnlData.length > 0 && (
+        <div className="card p-6 mb-6">
+          <h2 className="text-xs font-bold text-foreground mb-4 flex items-center gap-2 font-mono">
+            <span className="text-text-muted">[</span>
+            <TrendingUp className="h-3.5 w-3.5 text-accent-cyan" />
+            DAILY_PNL
+            <span className="text-text-muted">]</span>
+          </h2>
 
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={pnlData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#0f2f0f" />
-            <XAxis
-              dataKey="date"
-              stroke="#00802080"
-              tick={{ fill: '#00802080', fontSize: 11 }}
-              tickLine={false}
-              axisLine={{ stroke: '#0f2f0f' }}
-            />
-            <YAxis
-              stroke="#00802080"
-              tick={{ fill: '#00802080', fontSize: 11 }}
-              tickLine={false}
-              axisLine={{ stroke: '#0f2f0f' }}
-              tickFormatter={(v) => `$${v.toFixed(0)}`}
-            />
-            <Tooltip
-              contentStyle={{
-                background: '#0a140a',
-                border: '1px solid #0f2f0f',
-                borderRadius: '0px',
-                color: '#00ff41',
-                fontSize: '12px',
-                fontFamily: 'monospace',
-              }}
-              formatter={(value: any) => [formatCurrency(Number(value ?? 0)), 'P&L']}
-            />
-            <Bar
-              dataKey="pnl"
-              fill="#00ff41"
-              radius={[0, 0, 0, 0]}
-              // Color bars based on positive/negative
-              // (Recharts doesn't natively support per-bar colors easily,
-              //  so we use a custom shape)
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={pnlData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#0f2f0f" />
+              <XAxis
+                dataKey="date"
+                stroke="#00802080"
+                tick={{ fill: '#00802080', fontSize: 11 }}
+                tickLine={false}
+                axisLine={{ stroke: '#0f2f0f' }}
+              />
+              <YAxis
+                stroke="#00802080"
+                tick={{ fill: '#00802080', fontSize: 11 }}
+                tickLine={false}
+                axisLine={{ stroke: '#0f2f0f' }}
+                tickFormatter={(v) => `$${v.toFixed(0)}`}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: '#0a140a',
+                  border: '1px solid #0f2f0f',
+                  borderRadius: '0px',
+                  color: '#00ff41',
+                  fontSize: '12px',
+                  fontFamily: 'monospace',
+                }}
+                formatter={(value: any) => [formatCurrency(Number(value ?? 0)), 'P&L']}
+              />
+              <Bar
+                dataKey="pnl"
+                fill="#00ff41"
+                radius={[0, 0, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {/* ---- Active Positions ---- */}
       <div>
